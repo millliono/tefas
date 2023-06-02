@@ -1,0 +1,93 @@
+
+% Define the desired pattern
+desiredPattern = [1 0 1 0 1 0 1 0 1 0 ...
+                    1 0 1 0 1 0 1 0 1 0 ...
+                        1 0 1 0 1 0 1 0 1 0 ...
+                            1 0 1 0 1 0 1 0 1 0 ...
+                                1 0 1 0 1 0 1 0 1 0 ...
+                                    1 0 1 0 1 0 1 0 1 0 ...
+                                        1 0 1 0 1 0 1 0 1 0 ...
+                                            1 0 1 0 1 0 1 0 1 0 ...
+                                                1 0 1 0 1 0 1 0 1 0 ...
+                                                    1 0 1 0 1 0 1 0 1 0 ]; % Replace with your specific pattern
+
+% Genetic Algorithm Parameters
+populationSize = 100;    % Number of individuals in the population
+chromosomeLength = 100;  % Length of each chromosome
+mutationRate = 0.001;     % Mutation rate (probability of flipping a bit)
+crossoverFraction = 0; % Fraction of new population created through crossover
+
+% Calculate the number of individuals to create through crossover
+numCrossover = round(populationSize * crossoverFraction);
+
+% Initialize the population
+population = randi([0, 1], populationSize, chromosomeLength);
+
+cntr = 0;
+% Main loop
+while true
+    % Evaluate fitness
+    fitness = sum(population == desiredPattern, 2); % Count the number of matches
+    
+    % Find the best individual in the population
+    [bestFitness, bestIndex] = max(fitness);
+    bestChromosome = population(bestIndex, :);
+    
+    % Display the best fitness in each generation
+    fprintf('Generation %d: Best Fitness = %d\n', cntr, bestFitness);
+    
+    cntr = cntr + 1;
+
+    % Check termination condition
+    if bestFitness == chromosomeLength
+        fprintf('Optimal solution found!\n');
+        break;
+    end
+    
+    % Selection: Tournament selection
+    tournamentSize = 5;
+    selectedIndices = zeros(populationSize, 1);
+    for i = 1:populationSize
+        tournamentIndices = randperm(populationSize, tournamentSize);
+        tournamentFitness = fitness(tournamentIndices);
+        [~, maxIndex] = max(tournamentFitness);
+        selectedIndices(i) = tournamentIndices(maxIndex);
+    end
+    
+    % Create new population through crossover and mutation
+    newPopulation = zeros(populationSize, chromosomeLength);
+    
+    % Crossover
+    crossoverIndices = randperm(populationSize, numCrossover);
+    for i = 1:2:numCrossover
+        % Parent selection
+        parent1 = population(selectedIndices(crossoverIndices(i)), :);
+        parent2 = population(selectedIndices(crossoverIndices(i + 1)), :);
+        
+        % Crossover: Single-point crossover
+        crossoverPoint = randi(chromosomeLength - 1);
+        child1 = [parent1(1:crossoverPoint), parent2(crossoverPoint+1:end)];
+        child2 = [parent2(1:crossoverPoint), parent1(crossoverPoint+1:end)];
+        
+        % Add the children to the new population
+        newPopulation(crossoverIndices(i), :) = child1;
+        newPopulation(crossoverIndices(i + 1), :) = child2;
+    end
+    
+    % Mutation: Bit-flip mutation for the remaining individuals
+    for i = (numCrossover + 1):populationSize
+        parent = population(selectedIndices(i), :);
+        child = parent;
+        
+        for j = 1:chromosomeLength
+            if rand() < mutationRate
+                child(j) = ~child(j);
+            end
+        end
+        
+        % Add the mutated child to the new population
+        newPopulation(i, :) = child;
+    end
+    population = newPopulation;
+end
+   
