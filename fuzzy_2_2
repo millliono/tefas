@@ -1,0 +1,62 @@
+% Define the range of x values
+x = 0:0.1:30;
+
+% Calculate membership values for ma
+ma = zeros(size(x));
+ma(x >= 15) = 1 ./ (1 + (x(x >= 15) - 15).^(-2));
+
+% Calculate membership values for mb
+mb = 1 ./ (1 + (x - 17).^4);
+
+% Calculate mc
+mc = min(ma, mb);
+
+% Calculate md
+md = max(ma, mb);
+
+% Calculate me
+me = max((1 - ma), mb);
+
+% Plot the membership functions
+subplot(4, 1, 1);
+plot(x, ma, 'r', 'LineWidth', 2);
+hold on;
+plot(x, mb, 'b', 'LineWidth', 2);
+hold off;
+% Set plot properties
+xlabel('x');
+ylabel('Membership');
+title('Membership Functions');
+legend('ma', 'mb');
+grid on;
+
+
+subplot(4, 1, 2);
+plot(x, mc, 'g', 'LineWidth', 2);
+% Set plot properties
+xlabel('x');
+ylabel('Membership');
+title('mc = ma and mb');
+legend('mc');
+grid on;
+
+subplot(4, 1, 3);
+plot(x, md, 'c', 'LineWidth', 2);
+% Set plot properties
+xlabel('x');
+ylabel('Membership');
+title('md = ma or mb');
+legend('md');
+grid on;
+
+subplot(4, 1, 4);
+plot(x, me, 'k', 'LineWidth', 2);
+% Set plot properties
+xlabel('x');
+ylabel('Membership');
+title('me = (not ma) and mb');
+legend('me');
+grid on;
+
+
+
