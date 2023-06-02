@@ -1,0 +1,38 @@
+% Define the function h(x)
+h = @(x, f1, f2) 1 ./ (1 + (x ./ f2).^(-f1));
+
+% Parameter values for the first subplot
+f2_values_1 = 50;
+f1_values_1 = [1, 2, 4, 10, 100];
+
+% Parameter values for the second subplot
+f1_values_2 = 4;
+f2_values_2 = [30, 40, 50, 60, 70];
+
+% Create the first subplot
+subplot(2, 1, 1);
+x = linspace(0, 100, 100);
+for i = 1:length(f1_values_1)
+    y = h(x, f1_values_1(i), f2_values_1);
+    plot(x, y);
+    hold on;
+end
+hold off;
+legend('f1 = 1', 'f1 = 2', 'f1 = 4', 'f1 = 10', 'f1 = 100');
+title('h(x) with f2 = 50');
+
+% Create the second subplot
+subplot(2, 1, 2);
+for i = 1:length(f2_values_2)
+    y = h(x, f1_values_2, f2_values_2(i));
+    plot(x, y);
+    hold on;
+end
+hold off;
+legend('f2 = 30', 'f2 = 40', 'f2 = 50', 'f2 = 60', 'f2 = 70');
+title('h(x) with f1 = 4');
+
+% Adjust the layout and labels
+sgtitle('Plots of h(x) with different parameter values');
+xlabel('x');
+ylabel('h(x)');
