@@ -1,0 +1,37 @@
+% Define the input variables
+x = linspace(-5, 5, 100); % Range for x variable
+y = linspace(-5, 5, 100); % Range for y variable
+% Create a grid of z values using meshgrid
+[X, Y] = meshgrid(x, y);
+
+% Compute the membership functions
+mx_small = -sigmf(X,[2 0]); % Membership function for x small
+mx_big = sigmf(X,[2 0]); % Membership function for x big
+my_small = -sigmf(X,[5 0]); % Membership function for y small
+my_big = sigmf(X,[5 0]); % Membership function for y big
+
+% Compute the fuzzy relation using the fuzzy rules
+% Rule 1: if x small and y small then z=-x+y+1
+z1 = min(mx_small, my_small) .* (-X + Y + 1);
+
+% Rule 2: if x small and y big then z=-y+3
+z2 = min(mx_small, my_big) .* (-Y + 3);
+
+% Rule 3: if x big and y small then z = -x+3
+z3 = min(mx_big, my_small) .* (-X + 3);
+
+% Rule 4: if x big and y big then z =x+y+2
+z4 = min(mx_big, my_big) .* (X + Y + 2);
+
+% Compute the overall fuzzy relation by combining the individual rules
+z = max(max(z1, z2), max(z3, z4));
+
+
+
+% Plot the fuzzy relation
+figure;
+surf(X, Y, z);
+xlabel('x');
+ylabel('y');
+zlabel('z');
+title('Fuzzy Relation');
